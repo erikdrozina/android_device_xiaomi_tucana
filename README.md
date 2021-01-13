@@ -1,3 +1,5 @@
+Huge thanks to [chemusqui1](https://github.com/chemusqui1) and [alibei](https://github.com/alibei)
+
 Device configuration for Xiaomi Mi CC9 Pro/Note 10
 ============================================
 
