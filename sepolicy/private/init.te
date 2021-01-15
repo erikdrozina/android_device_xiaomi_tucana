@@ -1,3 +1,15 @@
+# Allow init to bind mount over vendor file
+allow init vendor_file:file mounton;
+
+# Allow init to mount vendor configs
+allow init vendor_configs_file:dir mounton;
+
+# Allow init to mount vendor overlay
+allow init vendor_overlay_file:dir mounton;
+
+# Allow init to write to sysfs_graphics
+allow init sysfs_graphics:file w_file_perms;
+
 allow init hal_touchfeature_xiaomi_hwservice:hwservice_manager find;
 allow init hal_touchfeature_xiaomi_default:binder call;
 allow init default_android_hwservice:hwservice_manager add;

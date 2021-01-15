@@ -1,8 +1,5 @@
 /*
-   Copyright (c) 2015, The Linux Foundation. All rights reserved.
-   Copyright (C) 2016 The CyanogenMod Project.
-   Copyright (C) 2019-2020 The LineageOS Project.
-
+   Copyright (c) 2014, The Linux Foundation. All rights reserved.
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:
@@ -28,110 +25,39 @@
    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <fstream>
-#include <unistd.h>
-#include <vector>
-
-#include <android-base/properties.h>
+#include <stdlib.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <sys/_system_properties.h>
 
-#include "property_service.h"
+#include <android-base/properties.h>
 #include "vendor_init.h"
 
-using android::base::GetProperty;
-using android::init::property_set;
-
-std::vector<std::string> ro_props_default_source_order = {
-    "",
-    "odm.",
-    "product.",
-    "system.",
-    "vendor.",
-};
-
-void property_override(char const prop[], char const value[], bool add = true) {
+void property_override(char const prop[], char const value[])
+{
     prop_info *pi;
 
-    pi = (prop_info *)__system_property_find(prop);
+    pi = (prop_info*) __system_property_find(prop);
     if (pi)
         __system_property_update(pi, value, strlen(value));
-    else if (add)
+    else
         __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
-/* From Magisk@jni/magiskhide/hide_utils.c */
-static const char *snet_prop_key[] = {
-    "ro.boot.vbmeta.device_state",
-    "ro.boot.verifiedbootstate",
-    "ro.boot.flash.locked",
-    "ro.boot.selinux",
-    "ro.boot.veritymode",
-    "ro.boot.warranty_bit",
-    "ro.warranty_bit",
-    "ro.debuggable",
-    "ro.secure",
-    "ro.build.type",
-    "ro.build.tags",
-    "ro.build.selinux",
-    NULL
-};
-
-static const char *snet_prop_value[] = {
-    "locked",
-    "green",
-    "1",
-    "enforcing",
-    "enforcing",
-    "0",
-    "0",
-    "0",
-    "1",
-    "user",
-    "release-keys",
-    "1",
-    NULL
-};
-
-static void workaround_snet_properties() {
-
-    // Hide all sensitive props
-    for (int i = 0; snet_prop_key[i]; ++i) {
-        property_override(snet_prop_key[i], snet_prop_value[i]);
-    }
-
-    chmod("/sys/fs/selinux/enforce", 0640);
-    chmod("/sys/fs/selinux/policy", 0440);
+void property_override_multifp(char const buildfp[], char const systemfp[],
+        char const bootimagefp[], char const vendorfp[], char const value[])
+{
+    property_override(buildfp, value);
+    property_override(systemfp, value);
+    property_override(bootimagefp, value);
+    property_override(vendorfp, value);
 }
 
-void vendor_load_properties() {
-    const auto set_ro_build_prop = [](const std::string &source,
-                                      const std::string &prop,
-                                      const std::string &value) {
-        auto prop_name = "ro." + source + "build." + prop;
-        property_override(prop_name.c_str(), value.c_str(), false);
-    };
-
-    const auto set_ro_product_prop = [](const std::string &source,
-                                        const std::string &prop,
-                                        const std::string &value) {
-        auto prop_name = "ro.product." + source + prop;
-        property_override(prop_name.c_str(), value.c_str(), false);
-    };
-
-    for (const auto &source : ro_props_default_source_order) {
-        set_ro_build_prop(source, "fingerprint",
-                          "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-        set_ro_product_prop(source, "brand", "Xiaomi");
-        set_ro_product_prop(source, "device", "tucana");
-        set_ro_product_prop(source, "model", "Mi Note 10");
-    }
-    property_override("ro.build.fingerprint", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-    property_override("ro.bootimage.build.fingerprint", "google/walleye/walleye:8.1.0/OPM1.171019.011/4448085:user/release-keys");
-    property_override("ro.build.description", "tucana_eea-user 10 QKQ1.190825.002 V11.1.1.0.QFDEUXM release-keys");
-
-    // Workaround SafetyNet
-    workaround_snet_properties();
+void vendor_load_properties()
+{
+    property_override("ro.apex.updatable", "true");
+    property_override("ro.oem_unlock_supported", "0");
+    // fingerprint
+    property_override("ro.product.model", "Mi Note 10");
+    property_override("ro.build.description", "redfin-user 11 RQ1A.201205.011 6966805 release-keys");
+    property_override_multifp("ro.build.fingerprint", "ro.system.build.fingerprint", "ro.bootimage.build.fingerprint", "ro.vendor.build.fingerprint", "google/redfin/redfin:11/RQ1A.201205.011/6966805:user/release-keys");
 }

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2020 The LineageOS Project
+# Copyright (C) 2018-2019 The LineageOS Project
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -31,10 +31,8 @@ setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}"
 # Copyright headers and guards
 write_headers
 
+# The standard blobs
 write_makefiles "${MY_DIR}/proprietary-files.txt" true
-
-cat << EOF >> "$ANDROIDMK"
-EOF
 
 # Finish
 write_footers

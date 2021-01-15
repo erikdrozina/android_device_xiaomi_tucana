@@ -24,21 +24,17 @@
 #include <fstream>
 
 #define COMMAND_NIT 10
-#define PARAM_NIT_630_FOD 1
+#define PARAM_NIT_FOD 1
 #define PARAM_NIT_NONE 0
 
-#define Touch_Fod_Enable 10
-#define Touch_Aod_Enable 11
+#define TOUCH_FOD_ENABLE 10
+#define TOUCH_AOD_ENABLE 11
 
-#define FOD_SENSOR_X 445
-#define FOD_SENSOR_Y 1715
-#define FOD_SENSOR_SIZE 190
+#define FOD_SENSOR_X 465
+#define FOD_SENSOR_Y 1735
+#define FOD_SENSOR_SIZE 192
 
 #define BRIGHTNESS_PATH "/sys/class/backlight/panel0-backlight/brightness"
-
-#define DISPPARAM_PATH "/sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/card0-DSI-1/disp_param"
-#define DISPPARAM_HBM_FOD_ON "0x20000"
-#define DISPPARAM_HBM_FOD_OFF "0xE0000"
 
 namespace vendor {
 namespace lineage {
@@ -65,7 +61,6 @@ static void set(const std::string& path, const T& value) {
 
 FingerprintInscreen::FingerprintInscreen() {
     TouchFeatureService = ITouchFeature::getService();
-    xiaomiDisplayFeatureService = IDisplayFeature::getService();
     xiaomiFingerprintService = IXiaomiFingerprint::getService();
 }
 
@@ -91,27 +86,23 @@ Return<void> FingerprintInscreen::onFinishEnroll() {
 
 Return<void> FingerprintInscreen::onPress() {
     acquire_wake_lock(PARTIAL_WAKE_LOCK, LOG_TAG);
-    set(DISPPARAM_PATH, DISPPARAM_HBM_FOD_ON);
-    xiaomiFingerprintService->extCmd(COMMAND_NIT, PARAM_NIT_630_FOD);
+    xiaomiFingerprintService->extCmd(COMMAND_NIT, PARAM_NIT_FOD);
     return Void();
 }
 
 Return<void> FingerprintInscreen::onRelease() {
-    set(DISPPARAM_PATH, DISPPARAM_HBM_FOD_OFF);
     xiaomiFingerprintService->extCmd(COMMAND_NIT, PARAM_NIT_NONE);
+    TouchFeatureService->resetTouchMode(TOUCH_FOD_ENABLE);
     release_wake_lock(LOG_TAG);
     return Void();
 }
 
 Return<void> FingerprintInscreen::onShowFODView() {
-    TouchFeatureService->setTouchMode(Touch_Fod_Enable, 1);
-    xiaomiDisplayFeatureService->setFeature(0, 17, 1, 1);
+    TouchFeatureService->setTouchMode(TOUCH_FOD_ENABLE, 1);
     return Void();
 }
 
 Return<void> FingerprintInscreen::onHideFODView() {
-    TouchFeatureService->resetTouchMode(Touch_Fod_Enable);
-    xiaomiDisplayFeatureService->setFeature(0, 17, 0, 1);
     return Void();
 }
 
@@ -138,7 +129,7 @@ Return<int32_t> FingerprintInscreen::getDimAmount(int32_t) {
     } else {
         alpha = 1.0 - pow(realBrightness / 1680.0, 0.455);
     }
-
+    if(alpha < 0.82)alpha+=0.1;
     return 255 * alpha;
 }
 

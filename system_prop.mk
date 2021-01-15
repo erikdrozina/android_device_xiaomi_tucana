@@ -10,28 +10,54 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Camera
 PRODUCT_PROPERTY_OVERRIDES += \
+    persist.camera.sat.fallback.dist=40 \
+    persist.camera.sat.fallback.dist.d=10 \
+    persist.camera.sat.fallback.luxindex=330 \
+    persist.camera.sat.fallback.lux.d=50 \
+    persist.vendor.camera.enableNCSService=TRUE \
+    persist.vendor.camera.enableTOFInterface=TRUE \
     vendor.camera.aux.packagelist=org.codeaurora.snapcam,com.android.camera,org.lineageos.snap
-    
-# CNE
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.vendor.cne.feature=1
 
-# DPM
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.vendor.dpm.feature=1
+# CNE and DPM
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.cne.feature=1 \
+    persist.vendor.dpm.feature=1 \
+    persist.vendor.dpm.loglevel=0 \
+    persist.vendor.dpm.nsrm.bkg.evt=3955
+
+# Data Modules
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.data.mode=concurrent \
+    ro.vendor.use_data_netmgrd=true
+
+# Display
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.eyecare.brightness.threshold=11 \
+    ro.eyecare.brightness.level=5 \
+    ro.displayfeature.histogram.enable=true \
+    ro.hist.brightness.threshold=7 \
+    ro.sf.lcd_density=440 \
+    ro.vendor.display.ad=1 \
+    ro.vendor.display.ad.hdr_calib_data=/vendor/etc/hdr_config.cfg \
+    ro.vendor.display.ad.sdr_calib_data=/vendor/etc/sdr_config.cfg \
+    ro.vendor.display.sensortype=2 \
+    ro.xiaomi.bl.poll=true \
+    persist.displayfeature.dc_backlight.threshold=610 \
+    persist.displayfeature.dc_backlight.enable=false \
+    persist.fod.modified.dc_status=false \
+    sys.displayfeature.hbm.enable=true
 
 # Graphics
 PRODUCT_PROPERTY_OVERRIDES += \
-    debug.cpurend.vsync=false \
     debug.sf.disable_backpressure=1 \
     debug.sf.latch_unsignaled=1 \
     debug.sf.enable_hwc_vds=1
 
-# IMS
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
-    persist.dbg.volte_avail_ovr=1 \
-    persist.dbg.vt_avail_ovr=1 \
-    persist.dbg.wfc_avail_ovr=1
+# Media
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.stagefright.thumbnail.prefer_hw_codecs=true \
+    media.settings.xml=/system/etc/media_profiles_vendor.xml \
+    vendor.mm.enable.qcom_parser=63963135
 
 # Memory optimizations
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -39,21 +65,40 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Netflix
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.netflix.bsp_rev=Q8250-19134-1
+    ro.netflix.bsp_rev=Q855-16947-1
 
-# Netmgr
-PRODUCT_SYSTEM_DEFAULT_PROPERTIES += \
+# RIL
+PRODUCT_PROPERTY_OVERRIDES += \
+    DEVICE_PROVISIONED=1 \
+    rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so \
+    ril.subscription.types=RUIM \
+    ro.telephony.default_cdma_sub=0 \
+    ro.telephony.default_network=22,22 \
+    persist.dbg.volte_avail_ovr=1 \
+    persist.dbg.vt_avail_ovr=1 \
+    persist.dbg.wfc_avail_ovr=1 \
+    persist.radio.NO_STAPA=1 \
+    persist.radio.VT_HYBRID_ENABLE=1 \
     persist.vendor.data.iwlan.enable=true \
-    ro.vendor.use_data_netmgrd=true \
-    persist.vendor.data.mode=concurrent
+    persist.vendor.ims.disableADBLogs=1 \
+    persist.vendor.ims.disableIMSLogs=1 \
+    persist.vendor.radio.enable_temp_dds=true \
+    persist.vendor.radio.force_on_dc=true \
+    persist.vendor.radio.redir_party_num=1 \
+    persist.vendor.radio.report_codec=1 \
+    telephony.lteOnCdmaDevice=1
 
 # RCS
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.rcs.supported=1
+    persist.rcs.supported=0
 
 # Sensors
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.sensors.enable.mag_filter=true
+
+# Subsystem ramdump
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.vendor.ssr.restart_level=ALL_ENABLE
 
 # Vendor
 PRODUCT_PROPERTY_OVERRIDES += \

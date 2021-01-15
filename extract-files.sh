@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2020 The LineageOS Project
+# Copyright (C) 2018 The LineageOS Project
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -22,6 +22,9 @@ if [ ! -f "${HELPER}" ]; then
     exit 1
 fi
 source "${HELPER}"
+
+SECTION=
+KANG=
 
 while [ "${#}" -gt 0 ]; do
     case "${1}" in
@@ -46,8 +49,16 @@ if [ -z "${SRC}" ]; then
     SRC="adb"
 fi
 
+function blob_fixup() {
+    case "${1}" in
+    product/lib64/libdpmframework.so )
+        sed -i "s/libhidltransport.so/libcutils-v29.so\x00\x00\x00/" "${2}"
+    ;;
+    esac
+}
+
 # Initialize the helper
-setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" false "${CLEAN_VENDOR}"
+setup_vendor "${DEVICE}" "${VENDOR}" "${LINEAGE_ROOT}" true "${CLEAN_VENDOR}"
 
 extract "${MY_DIR}/proprietary-files.txt" "${SRC}" \
         "${KANG}" --section "${SECTION}"
