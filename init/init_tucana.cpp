@@ -58,6 +58,6 @@ void vendor_load_properties()
     property_override("ro.oem_unlock_supported", "0");
     // fingerprint
     property_override("ro.product.model", "Mi Note 10");
-    property_override("ro.build.description", "redfin-user 11 RQ1A.201205.011 6966805 release-keys");
-    property_override_multifp("ro.build.fingerprint", "ro.system.build.fingerprint", "ro.bootimage.build.fingerprint", "ro.vendor.build.fingerprint", "google/redfin/redfin:11/RQ1A.201205.011/6966805:user/release-keys");
+    property_override("ro.build.description", "redfin-user 11 RQ1A.210105.003 7005429 release-keys");
+    property_override_multifp("ro.build.fingerprint", "ro.system.build.fingerprint", "ro.bootimage.build.fingerprint", "ro.vendor.build.fingerprint", "google/redfin/redfin:11/RQ1A.210105.003/7005429:user/release-keys");
 }
