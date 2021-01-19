@@ -7,8 +7,8 @@
 # Inherit from tucana device
 $(call inherit-product, device/xiaomi/tucana/device.mk)
 
-# Inherit from Superior vendor
-$(call inherit-product, vendor/superior/config/common.mk)
+# Inherit from arrow vendor
+$(call inherit-product, vendor/arrow/config/common.mk)
 
 #Screen Dimensions
 TARGET_SCREEN_HEIGHT := 2340
@@ -24,7 +24,7 @@ TARGET_BOOT_ANIMATION_RES := 1080
 #TARGET_GAPPS_ARCH := arm64
 
 # Device identifier. This must come after all inclusions.
-PRODUCT_NAME := superior_tucana
+PRODUCT_NAME := arrow_tucana
 PRODUCT_DEVICE := tucana
 PRODUCT_BRAND := Xiaomi
 PRODUCT_MODEL := Mi Note 10

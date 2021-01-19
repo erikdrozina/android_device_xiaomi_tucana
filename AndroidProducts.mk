@@ -5,4 +5,4 @@
 #
 
 PRODUCT_MAKEFILES := \
-    $(LOCAL_DIR)/superior_tucana.mk
+    $(LOCAL_DIR)/arrow_tucana.mk
