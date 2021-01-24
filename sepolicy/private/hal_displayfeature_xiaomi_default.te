@@ -1,1 +1,2 @@
 type hal_displayfeature_xiaomi_default, domain;
+allow hal_displayfeature_xiaomi_default sysfs_graphics:dir { search };

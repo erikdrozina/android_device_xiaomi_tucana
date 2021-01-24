@@ -12,6 +12,9 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/updatable_apex.mk)
 
 PRODUCT_CHARACTERISTICS := nosdcard
 
+# Setup dalvik vm configs
+$(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
+
 # Get non-open-source specific aspects
 $(call inherit-product-if-exists, vendor/xiaomi/tucana/tucana-vendor.mk)
 
@@ -38,7 +41,7 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 
 # Permissions
 PRODUCT_COPY_FILES += \
-   frameworks/native/data/etc/android.hardware.telephony.ims.xml:system/etc/permissions/android.hardware.telephony.ims.xml
+    frameworks/native/data/etc/android.hardware.telephony.ims.xml:system/etc/permissions/android.hardware.telephony.ims.xml
 
 # Audio
 PRODUCT_PACKAGES += \
@@ -49,22 +52,35 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_engine_configuration.xml:$(TARGET_COPY_OUT_PRODUCT)/vendor_overlay/$(PRODUCT_TARGET_VNDK_VERSION)/etc/audio_policy_engine_configuration.xml \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_PRODUCT)/vendor_overlay/$(PRODUCT_TARGET_VNDK_VERSION)/etc/audio_policy_configuration.xml \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(TARGET_COPY_OUT_PRODUCT)/vendor_overlay/$(PRODUCT_TARGET_VNDK_VERSION)/etc/audio/audio_policy_configuration.xml
+ 
 
 # ANT+
 PRODUCT_PACKAGES += \
     AntHalService
 
+# Ril
+PRODUCT_PACKAGES += \
+    android.hardware.radio@1.4
+
+
 # Bluetooth
 PRODUCT_PACKAGES += \
-    BluetoothQti
+    BluetoothQti \
+    vendor.qti.hardware.btconfigstore@1.0 \
+    vendor.qti.hardware.btconfigstore@2.0
 
 # Camera
 PRODUCT_PACKAGES += \
+    vendor.qti.hardware.camera.device@1.0 \
     Snap
 
 # Device-specific settings
 PRODUCT_PACKAGES += \
     XiaomiParts
+
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/parts/privapp-permissions-parts.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/permissions/privapp-permissions-parts.xml
+
 
 # Display
 PRODUCT_PACKAGES += \
@@ -118,7 +134,8 @@ PRODUCT_BOOT_JARS += \
 # Init
 PRODUCT_PACKAGES += \
     init.mi_thermald.rc \
-    init.qcom.rc
+    init.qcom.rc \
+    init.safailnet.rc
 
 # Input
 PRODUCT_COPY_FILES += \
@@ -162,9 +179,10 @@ PRODUCT_HOST_PACKAGES += \
 PRODUCT_PACKAGES += \
     android.hardware.power@1.2-service.tucana
 
-# Ril
-PRODUCT_PACKAGES += \
-    android.hardware.radio@1.4
+    
+# Sensor Configuration
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/sensors/hals.conf:$(TARGET_COPY_OUT_SYSTEM)/etc/sensors/hals.conf
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
