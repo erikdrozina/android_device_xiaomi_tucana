@@ -1,0 +1,4 @@
+allow hal_light sysfs_ledcit:file rw_file_perms;
+allow hal_light sysfs_oem:file getattr;
+allow hal_light sysfs_graphics:lnk_file { read write };
+# allow hal_light_default sysfs_graphics:lnk_file { read };

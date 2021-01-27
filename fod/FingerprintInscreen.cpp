@@ -61,6 +61,7 @@ static void set(const std::string& path, const T& value) {
 
 FingerprintInscreen::FingerprintInscreen() {
     TouchFeatureService = ITouchFeature::getService();
+    xiaomiDisplayFeatureService = IDisplayFeature::getService();
     xiaomiFingerprintService = IXiaomiFingerprint::getService();
 }
 
@@ -92,21 +93,45 @@ Return<void> FingerprintInscreen::onPress() {
 
 Return<void> FingerprintInscreen::onRelease() {
     xiaomiFingerprintService->extCmd(COMMAND_NIT, PARAM_NIT_NONE);
-    TouchFeatureService->resetTouchMode(TOUCH_FOD_ENABLE);
     release_wake_lock(LOG_TAG);
     return Void();
 }
 
 Return<void> FingerprintInscreen::onShowFODView() {
     TouchFeatureService->setTouchMode(TOUCH_FOD_ENABLE, 1);
+    xiaomiDisplayFeatureService->setFeature(0, 17, 1, 1);
     return Void();
 }
 
 Return<void> FingerprintInscreen::onHideFODView() {
+    TouchFeatureService->resetTouchMode(TOUCH_FOD_ENABLE);
+    xiaomiDisplayFeatureService->setFeature(0, 17, 0, 1);
     return Void();
 }
 
 Return<bool> FingerprintInscreen::handleAcquired(int32_t acquiredInfo, int32_t vendorCode) {
+    std::lock_guard<std::mutex> _lock(mCallbackLock);
+    if (mCallback == nullptr) {
+        return false;
+    }
+
+    if (acquiredInfo == 6) {
+        if(vendorCode == 22) {
+           Return<void> ret = mCallback->onFingerDown();
+           if (!ret.isOk()) {
+               LOG(ERROR) << "FingerDown() error: " << ret.description();
+           }
+           return true;
+        }
+
+        if (vendorCode == 23) {
+           Return<void> ret = mCallback->onFingerUp();
+           if (!ret.isOk()) {
+               LOG(ERROR) << "FingerUp() error: " << ret.description();
+           }
+           return true;
+        }
+    }
     LOG(ERROR) << "acquiredInfo: " << acquiredInfo << ", vendorCode: " << vendorCode << "\n";
     return false;
 }
@@ -129,6 +154,7 @@ Return<int32_t> FingerprintInscreen::getDimAmount(int32_t) {
     } else {
         alpha = 1.0 - pow(realBrightness / 1680.0, 0.455);
     }
+
     if(alpha < 0.82)alpha+=0.1;
     return 255 * alpha;
 }
@@ -137,7 +163,11 @@ Return<bool> FingerprintInscreen::shouldBoostBrightness() {
     return false;
 }
 
-Return<void> FingerprintInscreen::setCallback(const sp<IFingerprintInscreenCallback>&) {
+Return<void> FingerprintInscreen::setCallback(const sp<IFingerprintInscreenCallback>& callback) {
+   {
+        std::lock_guard<std::mutex> _lock(mCallbackLock);
+        mCallback = callback;
+   }
     return Void();
 }
 

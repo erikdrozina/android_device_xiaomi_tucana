@@ -32,4 +32,7 @@
     <dimen name="keyguard_security_fod_view_margin">100dp</dimen>
     <!-- Bottom margin size when fingerprint in display is active -->
     <dimen name="keyguard_indication_margin_bottom_fingerprint_in_display">192dp</dimen>
+    <!-- FOD recognizing animation vertical position offset -->
+    <dimen name="fod_animation_offset">3dp</dimen>
+
 </resources>
