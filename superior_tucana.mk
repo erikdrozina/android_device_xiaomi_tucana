@@ -24,10 +24,8 @@ TARGET_BOOT_ANIMATION_RES := 1080
 EXTRA_FOD_ANIMATIONS := true
 
 # Face unlock
-#TARGET_USES_FACE_UNLOCK := true
+TARGET_USES_FACE_UNLOCK := true
 
-#GApps
-#TARGET_GAPPS_ARCH := arm64
 
 # Device identifier. This must come after all inclusions.
 PRODUCT_NAME := superior_tucana
