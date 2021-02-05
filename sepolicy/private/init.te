@@ -1,15 +1,13 @@
-permissive init;
-
-# Allow init to bind mount over vendor file
-allow init vendor_file:file mounton;
-allow init vendor_hal_file:file {mounton};
-
 # Allow init to mount vendor configs
 allow init vendor_configs_file:dir mounton;
 allow init vendor_configs_file:file mounton;
 
 # Allow init to mount vendor overlay
 allow init vendor_overlay_file:dir mounton;
+
+# Allow init to bind mount over vendor file
+allow init vendor_file:file mounton;
+allow init vendor_hal_file:file {mounton};
 
 #allow init debugfs to write 
 allow init debugfs : dir { write };
@@ -18,29 +16,15 @@ allow init debugfs : dir { write };
 allow init sysfs : file { setattr };
 
 #Allow init to bind mount kernel module
- allow init system_file:dir mounton;
+allow init system_file:dir mounton;
 
 # Allow init to write to otg_switch
 allow init sysfs_usb_supply:file w_file_perms;
 
 # Allow init to write to sysfs_graphics
-allow init sysfs_graphics:file rw_file_perms;
+allow init sysfs_graphics:file w_file_perms;
 
-allow init system_file:file { execute_no_trans };
-allow init hwservicemanager:binder { call };
-allow init adsprpcd_file:dir { create rmdir };
-allow init bt_firmware_file:dir { create rmdir };
-allow init firmware_file:dir { create rmdir };
-allow init hal_touchfeature_xiaomi_hwservice:hwservice_manager find;
+allow init hal_displayfeature_xiaomi_default:binder call;
+allow init hal_fod_tucana_exec:file { execute execute_no_trans getattr map };
 allow init hal_touchfeature_xiaomi_default:binder call;
-allow init system_suspend:binder { call };
-allow init sysfs_graphics:lnk_file { read };
-allow init self:netlink_route_socket { read };
-allow init netutils_wrapper_exec:file { execute };
-allow init netutils_wrapper_exec:file { execute_no_trans };
-allow init netutils_wrapper_exec:file { map };
-allow init netutils_wrapper_exec:file { getattr };
-allow init default_android_hwservice:hwservice_manager add;
-allow init hal_fingerprint_hwservice_xiaomi:hwservice_manager find;
-allow init hal_displayfeature_xiaomi_hwservice:hwservice_manager find;
-allow init hidl_base_hwservice:hwservice_manager add;
+allow init sysfs_graphics:lnk_file read;

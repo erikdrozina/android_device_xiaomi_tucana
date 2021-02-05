@@ -1,0 +1,7 @@
+allow untrusted_app self:netlink_route_socket { bind };
+allow untrusted_app vendor_proc_shs:dir { search };
+allow untrusted_app proc_asound:dir { search };
+allow untrusted_app adbd_prop:file { getattr map open };
+allow untrusted_app apexd_prop:file { getattr open };
+allow untrusted_app theme_prop:file { getattr map open read };
+

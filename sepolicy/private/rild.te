@@ -1,1 +1,0 @@
-#allow rild platform_app:binder { call };

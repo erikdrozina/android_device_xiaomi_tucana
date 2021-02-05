@@ -1,8 +1,0 @@
-allow untrusted_app sysfs_kgsl:dir search;
-allow untrusted_app sysfs_kgsl:file r_file_perms;
-allow untrusted_app sysfs_graphics:dir search;
-allow untrusted_app sysfs_graphics:file r_file_perms;
-allow untrusted_app self:netlink_route_socket { bind };
-allow untrusted_app proc_asound:dir { search };
-allow untrusted_app theme_prop:file { getattr map open read };
-get_prop(untrusted_app, vendor_camera_prop);
