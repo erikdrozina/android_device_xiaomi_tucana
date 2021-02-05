@@ -20,4 +20,14 @@
     <dimen name="rounded_corner_content_padding">14.0dip</dimen>
     <!-- the padding on the top of the statusbar (usually 0) -->
     <dimen name="status_bar_padding_top">2dp</dimen>
+    
+    <!-- FOD recognizing animation -->
+    <dimen name="fod_animation_size">220dp</dimen>
+    
+    <!-- FOD recognizing animation vertical position offset -->
+    <dimen name="fod_animation_offset">3dp</dimen>
+
+    <!-- Bottom margin size when fingerprint in display is active -->
+    <dimen name="keyguard_indication_margin_bottom_fingerprint_in_display">25dp</dimen>
+    
 </resources>
