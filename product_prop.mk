@@ -14,10 +14,21 @@ PRODUCT_PRODUCT_PROPERTIES += \
 # Charger
 PRODUCT_PRODUCT_PROPERTIES += \
     ro.charger.enable_suspend=true
+    
+# Dex2oat
+dalvik.vm.dex2oat64.enabled=true
 
 # Graphics
 PRODUCT_PRODUCT_PROPERTIES += \
-    ro.surface_flinger.force_hwc_copy_for_virtual_displays=true
+    persist.hwc.enable_vds \
+    persist.demo.hdmirotationlock=false \
+    ro.surface_flinger.force_hwc_copy_for_virtual_displays=true \
+    ro.surface_flinger.has_HDR_display=true \
+    ro.surface_flinger.has_wide_color_display=true \
+    ro.surface_flinger.max_virtual_display_dimension=4096 \
+    ro.surface_flinger.protected_contents=true \
+    ro.surface_flinger.use_color_management=true \
+    ro.surface_flinger.wcg_composition_dataspace=143261696
 
 # Enable blurs
 PRODUCT_PRODUCT_PROPERTIES += \
@@ -33,7 +44,17 @@ PRODUCT_PRODUCT_PROPERTIES += \
 
 # Media
 PRODUCT_PRODUCT_PROPERTIES += \
-    debug.stagefright.omx_default_rank.sw-audio=16
+    debug.stagefright.omx_default_rank.sw-audio=16 \
+    
+# Radio
+PRODUCT_PRODUCT_PROPERTIES += \
+    DEVICE_PROVISIONED=1 \
+    persist.vendor.ims.disableADBLogs=1 \
+    persist.vendor.ims.disableIMSLogs=1 \
+    persist.vendor.radio.enable_temp_dds=true \
+    persist.vendor.radio.force_on_dc=true \
+    rild.libpath=/vendor/lib64/libril-qc-hal-qmi.so \
+    ril.subscription.types=RUIM
 
 # Wireless display
 PRODUCT_PRODUCT_PROPERTIES += \
