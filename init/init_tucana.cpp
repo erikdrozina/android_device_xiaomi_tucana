@@ -1,5 +1,7 @@
 /*
-   Copyright (c) 2014, The Linux Foundation. All rights reserved.
+   Copyright (c) 2015, The Linux Foundation. All rights reserved.
+   Copyright (C) 2016 The CyanogenMod Project.
+   Copyright (C) 2019-2020 The LineageOS Project.
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
    met:
@@ -25,40 +27,120 @@
    IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdlib.h>
+#include <fstream>
+#include <unistd.h>
+#include <vector>
+
+#include <android-base/properties.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
 
-#include <android-base/properties.h>
+#include "property_service.h"
 #include "vendor_init.h"
 
-void property_override(char const prop[], char const value[])
-{
-    prop_info *pi;
+using android::base::GetProperty;
 
-    pi = (prop_info*) __system_property_find(prop);
-    if (pi)
-        __system_property_update(pi, value, strlen(value));
-    else
-        __system_property_add(prop, strlen(prop), value, strlen(value));
+int property_set(const char *key, const char *value) {
+    return __system_property_set(key, value);
 }
 
-void property_override_multifp(char const buildfp[], char const systemfp[],
-        char const bootimagefp[], char const vendorfp[], char const value[])
-{
-    property_override(buildfp, value);
-    property_override(systemfp, value);
-    property_override(bootimagefp, value);
-    property_override(vendorfp, value);
+constexpr const char *RO_PROP_SOURCES[] = {
+    nullptr,   "product.", "product_services.", "odm.",
+    "vendor.", "system.", "system_ext.", "bootimage.",
+};
+
+constexpr const char *BRANDS[] = {
+    "Xiaomi",
+    "Xiaomi",
+};
+
+constexpr const char *PRODUCTS[] = {
+    "tucana",
+    "tucana",
+};
+
+constexpr const char *DEVICES[] = {
+    "Mi CC9 Pro",
+    "Mi Note 10",
+};
+
+constexpr const char *BUILD_DESCRIPTION[] = {
+    "redfin-user 11 RQ1A.210205.004 7038034 release-keys",
+    "redfin-user 11 RQ1A.210205.004 7038034 release-keys",
+};
+
+constexpr const char *BUILD_FINGERPRINT[] = {
+    "google/redfin/redfin:11/RQ1A.210205.004/7038034:user/release-keys",
+    "google/redfin/redfin:11/RQ1A.210205.004/7038034:user/release-keys",
+};
+
+constexpr const char *CLIENT_ID[] = {
+    "android-xiaomi",
+    "android-xiaomi",
+};
+
+void property_override(char const prop[], char const value[], bool add = true) {
+  prop_info *pi;
+
+  pi = (prop_info *)__system_property_find(prop);
+  if (pi)
+    __system_property_update(pi, value, strlen(value));
+  else if (add)
+    __system_property_add(prop, strlen(prop), value, strlen(value));
 }
 
-void vendor_load_properties()
-{
-    property_override("ro.apex.updatable", "true");
-    property_override("ro.oem_unlock_supported", "0");
-    property_override("ro.boot.selinux", "enforcing");
-    // fingerprint
-    property_override("ro.product.model", "Mi Note 10");
-    property_override("ro.build.description", "redfin-user 11 RQ1A.210105.003 7005429 release-keys");
-    property_override_multifp("ro.build.fingerprint", "ro.system.build.fingerprint", "ro.bootimage.build.fingerprint", "ro.vendor.build.fingerprint", "google/redfin/redfin:11/RQ1A.210105.003/7005429:user/release-keys");
+void load_props(const char *model, bool is_in = false) {
+  const auto ro_prop_override = [](const char *source, const char *prop,
+                                   const char *value, bool product) {
+    std::string prop_name = "ro.";
+
+    if (product)
+      prop_name += "product.";
+    if (source != nullptr)
+      prop_name += source;
+    if (!product)
+      prop_name += "build.";
+    prop_name += prop;
+
+    property_override(prop_name.c_str(), value);
+  };
+
+  for (const auto &source : RO_PROP_SOURCES) {
+    ro_prop_override(source, "device", is_in ? PRODUCTS[1] : PRODUCTS[0], true);
+    ro_prop_override(source, "model", model, true);
+    if (!is_in) {
+      ro_prop_override(source, "brand", BRANDS[0], true);
+      ro_prop_override(source, "name", PRODUCTS[0], true);
+      ro_prop_override(source, "fingerprint", BUILD_FINGERPRINT[0], false);
+      property_override("ro.oem_unlock_supported", "0");
+      property_override("ro.boot.selinux", "enforcing");
+    } else {
+      ro_prop_override(source, "brand", BRANDS[1], true);
+      ro_prop_override(source, "name", PRODUCTS[1], true);
+      ro_prop_override(source, "fingerprint", BUILD_FINGERPRINT[1], false);
+      property_override("ro.oem_unlock_supported", "0");
+      property_override("ro.boot.selinux", "enforcing");
+    }
+  }
+
+  if (!is_in) {
+    ro_prop_override(nullptr, "description", BUILD_DESCRIPTION[0], false);
+    property_override("ro.boot.product.hardware.sku", PRODUCTS[0]);
+  } else {
+    ro_prop_override(nullptr, "description", BUILD_DESCRIPTION[1], false);
+    property_override("ro.com.google.clientidbase", CLIENT_ID[0]);
+    property_override("ro.com.google.clientidbase.ms", CLIENT_ID[1]);
+  }
+  ro_prop_override(nullptr, "product", model, false);
+}
+
+void vendor_load_properties() {
+  std::string region;
+  region = GetProperty("ro.boot.hwc", "");
+
+  if (region == "CN") {
+    load_props(DEVICES[0], false);
+  } else if (region == "GLOBAL") {
+    load_props(DEVICES[1], true);
+  }
 }
