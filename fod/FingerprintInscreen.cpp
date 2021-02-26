@@ -23,12 +23,13 @@
 #include <cmath>
 #include <fstream>
 
+#define FINGERPRINT_ACQUIRED_VENDOR 6
+
 #define COMMAND_NIT 10
 #define PARAM_NIT_FOD 1
 #define PARAM_NIT_NONE 0
 
 #define TOUCH_FOD_ENABLE 10
-#define TOUCH_AOD_ENABLE 11
 
 #define FOD_SENSOR_X 465
 #define FOD_SENSOR_Y 1735
@@ -60,8 +61,8 @@ static void set(const std::string& path, const T& value) {
 }
 
 FingerprintInscreen::FingerprintInscreen() {
-    TouchFeatureService = ITouchFeature::getService();
     xiaomiDisplayFeatureService = IDisplayFeature::getService();
+    TouchFeatureService = ITouchFeature::getService();
     xiaomiFingerprintService = IXiaomiFingerprint::getService();
 }
 
@@ -72,6 +73,22 @@ Return<int32_t> FingerprintInscreen::getPositionX() {
 Return<int32_t> FingerprintInscreen::getPositionY() {
     return FOD_SENSOR_Y;
 }
+
+Return<int32_t> FingerprintInscreen::getDimAmount(int32_t) {
+    int32_t alpha;
+    int realBrightness = get(BRIGHTNESS_PATH, 0);
+
+    if (realBrightness > 9) {
+    alpha = (255 + ((-8.08071) * pow(realBrightness, 0.45)));
+    } else {
+    alpha = (255 + ((-10.08071) * pow(realBrightness, 0.45)));
+    }
+
+    if(alpha < 0.82)
+    alpha+=0.1;
+    return alpha;
+}
+
 
 Return<int32_t> FingerprintInscreen::getSize() {
     return FOD_SENSOR_SIZE;
@@ -98,8 +115,8 @@ Return<void> FingerprintInscreen::onRelease() {
 }
 
 Return<void> FingerprintInscreen::onShowFODView() {
-    TouchFeatureService->setTouchMode(TOUCH_FOD_ENABLE, 1);
     xiaomiDisplayFeatureService->setFeature(0, 17, 1, 1);
+    TouchFeatureService->setTouchMode(TOUCH_FOD_ENABLE, 1);
     return Void();
 }
 
@@ -115,7 +132,7 @@ Return<bool> FingerprintInscreen::handleAcquired(int32_t acquiredInfo, int32_t v
         return false;
     }
 
-    if (acquiredInfo == 6) {
+    if (acquiredInfo == FINGERPRINT_ACQUIRED_VENDOR) {
         if(vendorCode == 22) {
            Return<void> ret = mCallback->onFingerDown();
            if (!ret.isOk()) {
@@ -132,7 +149,7 @@ Return<bool> FingerprintInscreen::handleAcquired(int32_t acquiredInfo, int32_t v
            return true;
         }
     }
-    LOG(ERROR) << "acquiredInfo: " << acquiredInfo << ", vendorCode: " << vendorCode << "\n";
+
     return false;
 }
 
@@ -143,20 +160,6 @@ Return<bool> FingerprintInscreen::handleError(int32_t error, int32_t vendorCode)
 
 Return<void> FingerprintInscreen::setLongPressEnabled(bool) {
     return Void();
-}
-
-Return<int32_t> FingerprintInscreen::getDimAmount(int32_t) {
-    float alpha;
-    int realBrightness = get(BRIGHTNESS_PATH, 0);
-
-    if (realBrightness > 500) {
-        alpha = 1.0 - pow(realBrightness / 2047.0 * 430.0 / 600.0, 0.455);
-    } else {
-        alpha = 1.0 - pow(realBrightness / 1680.0, 0.455);
-    }
-
-    if(alpha < 0.82)alpha+=0.1;
-    return 255 * alpha;
 }
 
 Return<bool> FingerprintInscreen::shouldBoostBrightness() {

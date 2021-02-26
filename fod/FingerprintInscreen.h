@@ -57,8 +57,8 @@ class FingerprintInscreen : public IFingerprintInscreen {
     Return<void> setCallback(const sp<IFingerprintInscreenCallback>& callback) override;
 
   private:
-    sp<ITouchFeature> TouchFeatureService;
     sp<IDisplayFeature> xiaomiDisplayFeatureService;
+    sp<ITouchFeature> TouchFeatureService;
     sp<IXiaomiFingerprint> xiaomiFingerprintService;
     std::mutex mCallbackLock;
     sp<IFingerprintInscreenCallback> mCallback;
