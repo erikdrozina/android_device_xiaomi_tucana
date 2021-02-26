@@ -7,7 +7,7 @@
 # Inherit from tucana device
 $(call inherit-product, device/xiaomi/tucana/device.mk)
 
-# Inherit from arrow vendor
+# Inherit from Arrow vendor
 $(call inherit-product, vendor/arrow/config/common.mk)
 
 #Screen Dimensions
