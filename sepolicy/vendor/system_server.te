@@ -5,3 +5,5 @@ allow system_server init:binder call;
 allow system_server vendor_debugfs_ion:file { getattr open read };
 allow system_server vendor_display_notch_prop:file { getattr map open read };
 
+#Smart charging
+allow system_server sysfs_battery_supply:file { getattr open read write };

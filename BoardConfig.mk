@@ -1,4 +1,3 @@
-
 # Copyright (C) 2020 The LineageOS Project
 #
 # SPDX-License-Identifier: Apache-2.0
@@ -6,11 +5,10 @@
 
 BOARD_VENDOR := xiaomi
 
-BUILD_BROKEN_DUP_RULES := true
-
 DEVICE_PATH := device/xiaomi/tucana
 TARGET_SPECIFIC_HEADER_PATH := $(DEVICE_PATH)/include
 
+BUILD_BROKEN_USES_BUILD_COPY_HEADERS := true
 BUILD_BROKEN_DUP_RULES := true
 
 # Compile libhwui in perfomance mode
@@ -83,7 +81,6 @@ AUDIO_FEATURE_ENABLED_HDMI_SPK := true
 AUDIO_FEATURE_ENABLED_PROXY_DEVICE := true
 USE_CUSTOM_AUDIO_POLICY := 1
 USE_XML_AUDIO_POLICY_CONF := 1
-
 
 # Battery
 BOARD_GLOBAL_CFLAGS += -DBATTERY_REAL_INFO
@@ -170,7 +167,6 @@ BOARD_SUPPRESS_SECURE_ERASE := true
 
 # Sepolicy
 SELINUX_IGNORE_NEVERALLOWS := true
-SELINUX_IGNORE_NEVERALLOWS_ON_USER := true
 BOARD_PLAT_PRIVATE_SEPOLICY_DIR := $(DEVICE_PATH)/sepolicy/private
 BOARD_PLAT_VENDOR_SEPOLICY_DIR := $(DEVICE_PATH)/sepolicy/vendor
 
@@ -183,14 +179,6 @@ BOARD_PLAT_PUBLIC_SEPOLICY_DIR += \
     device/qcom/sepolicy_vndr/qva/public \
     device/qcom/sepolicy/qva/public \
     device/qcom/sepolicy/qva/public/attribute
-    
-PRODUCT_PUBLIC_SEPOLICY_DIRS += \
-    device/qcom/sepolicy/generic/product/public \
-    device/qcom/sepolicy/qva/product/public
-
-PRODUCT_PRIVATE_SEPOLICY_DIRS += \
-    device/qcom/sepolicy/generic/product/private \
-    device/qcom/sepolicy/qva/product/private    
 
 # Treble
 BUILD_WITHOUT_VENDOR := true

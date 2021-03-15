@@ -2,13 +2,15 @@ on boot
     chown system graphics /sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/sde-crtc-0/measured_fps
     chmod 0666 /sys/devices/platform/soc/ae00000.qcom,mdss_mdp/drm/card0/sde-crtc-0/measured_fps
     
+    # Allow system to read measured screen FPS
+    chown system system /sys/class/power_supply/battery/input_suspend
+    chmod 0666 /sys/class/power_supply/battery/input_suspend
+
 import /system/etc/init/init.safailnet.rc
 
 on post-fs-data
+    mount none /vendor/etc/audio/audio_policy_configuration.xml /vendor/etc/audio_policy_configuration.xml bind
     write /sys/class/drm/card0-DSI-1/dim_layer_enable 1
-    mount none dev/null /vendor/lib/soundfx/libvolumelistener.so bind
-    mount none dev/null /vendor/lib64/soundfx/libvolumelistener.so bind
-    mount none dev/null /vendor/overlay/FrameworksResTarget.apk bind
 
 service citsensor-hal-1-1  /vendor/bin/hw/vendor.xiaomi.hardware.citsensorservice@1.1-service
     override
@@ -32,7 +34,7 @@ on property:init.svc.tcpdump=running
 
 on property:init.svc.vendor.ipacm-diag=running
     stop vendor.ipacm-diag
-    
+
 on property:persist.sys.device_provisioned=1
     setprop dalvik.vm.dex2oat-cpu-set 0,1,2,3,4,5,6
     setprop dalvik.vm.dex2oat-threads 6

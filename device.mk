@@ -31,7 +31,6 @@ PRODUCT_AAPT_PREF_CONFIG := xxhdpi
 # Audio
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
-    tinymix \
     libaacwrapper \
     vendor.qti.hardware.audiohalext@1.0
 
@@ -119,7 +118,7 @@ PRODUCT_PACKAGES += \
     FM2 \
     libqcomfm_jni \
     qcom.fmradio
-    
+
 # Framework detect
 PRODUCT_PACKAGES += \
     libqti_vndfwk_detect \
@@ -147,7 +146,7 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_BOOT_JARS += \
     org.ifaa.android.manager
-    
+
 # IMS
 PRODUCT_PACKAGES += \
     com.android.ims.rcsmanager \
@@ -164,7 +163,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/keylayout/gpio-keys.kl:system/usr/keylayout/gpio-keys.kl \
     $(LOCAL_PATH)/keylayout/sm8150-tavil-snd-card_Button_Jack.kl:system/usr/keylayout/sm8150-tavil-snd-card_Button_Jack.kl
-    
+
 # IR
 PRODUCT_PACKAGES += \
     android.hardware.ir@1.0-impl \
@@ -251,13 +250,9 @@ PRODUCT_PACKAGES += \
     libjson \
     libprotobuf-cpp-full \
     libxml2
-    
+
 PRODUCT_BOOT_JARS += \
     telephony-ext  
-
-# TextClassifier
-PRODUCT_PACKAGES += \
-    textclassifier.bundle1
     
 # Thermal
 PRODUCT_PACKAGES += \
